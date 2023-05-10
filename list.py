@@ -22,12 +22,11 @@ def listingFiles():
         listBucket()
         bucketName = input("Enter your bucket name to list all files inside: ")
         try:
-            s3_client.meta.client.head_bucket(Bucket=bucketName)
-            bucket = s3c.Bucket(bucketName)
-            print(f"Files are in '{bucketName}' bucket are: ")
-            for files in bucket.object.all():
-                print(files.key)
-            break
+            s3 = boto3.client('s3')
+            response = s3.list_objects(Bucket=bucketName)
+            if 'Contents' in response:
+                for item in response['Contents']:
+                    print(item['Key'])
         except Exception as e:
             print(f"Error: {e}")
             c = input("Try Again okay? y/n") 
