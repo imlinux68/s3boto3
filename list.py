@@ -7,8 +7,7 @@ from time import sleep
 
 s3 = boto3.resource('s3')
 regionName = 'us-west-2'
-s3c = boto3.client('s3', regionName)
-
+s3_client = boto3.client('s3', region_name=regionName)
 
 def listBucket():
     print("Here are your already existing Buckets: ")
@@ -21,8 +20,8 @@ def listingFiles():
         listBucket()
         bucketName = input("Enter your bucket name to list all files inside: ")
         try:
-            s3c.meta.client.head_bucket(Bucket=bucketName)
-            bucket = s3c.Bucket(bucketName)
+            s3_client.meta.client.head_bucket(Bucket=bucketName)
+            bucket = s3_client.Bucket(bucketName)
             print(f"Files are in '{bucketName}' bucket are: ")
             for files in bucket.object.all():
                 print(files.key)
@@ -39,10 +38,10 @@ def createBucket():
         listBucket()
         bucketName = input("Enter your bucket name to list all files inside: ")
         try:
-            s3c.meta.client.head_bucket(Bucket=bucketName)
+            s3_client.meta.client.head_bucket(Bucket=bucketName)
             print(f"The bucket name '{bucketName}' is already taken!!")
         except:
-            s3c.create_bucket(Bucket=bucketName)
+            s3_client.create_bucket(Bucket=bucketName)
             print(f"The bucket name '{bucketName}' Created successfully!!")
             break
 
