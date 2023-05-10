@@ -22,8 +22,8 @@ def listingFiles():
             s3.meta.client.head_bucket(Bucket=bucketName)
             bucket = s3.Bucket(bucketName)
             print(f"Files are in '{bucketName}' bucket are: ")
-            for file in bucket.object.all():
-                print(obj.key)
+            for files in bucket.object.all():
+                print(files.key)
             break
         except Exception as e:
             print(f"Error: {e}")
@@ -123,7 +123,7 @@ def menu ():
             sleep(3)
             deleteBucket()
         else:
-            print("Enter 1-5 ONLY!!!!\n")
+            print("Enter 1-6 ONLY!!!!\n")
             continue
         exit=input("Do you wanna to exit? yes/no\n")
         if(exit=="yes"):
