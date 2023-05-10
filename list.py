@@ -2,6 +2,8 @@
 import boto3
 import os
 from time import sleep
+from botocore.exceptions import ClientError 
+import logging
 
 
 
@@ -36,16 +38,16 @@ def listingFiles():
 def createBucket(region):
     while True:
         listBucket()
-        bucketName = input("Enter your bucket name to list all files inside: ")
+        bucketName = input("Enter your bucket name to create it ")
         try:
             s3_client = boto3.client('s3', region_name=region)
             location = {'LocationConstraint': region}
             s3_client.create_bucket(Bucket=bucketName,
                                     CreateBucketConfiguration=location)
-        except:
-            s3c.create_bucket(Bucket=bucketName)
-            print(f"The bucket name '{bucketName}' Created successfully!!")
-            break
+        except ClientError as e:
+            logging.error(e)
+            return False
+        return True
 
 def deleteBucket():
     while True:
@@ -81,20 +83,22 @@ def uploadFile():
 
 def downFile():
     while True:
-        listingFiles()
+        listBucket()
         bucketName = input("Enter your bucket name to download from it: ")
-        try:
-            s3.meta.client.head_bucket(Bucket=bucketName)
-            break
-        except:
-            print(f"The bucket {bucketName} doesnt exists")
-    file_path = input("Enter the filenames separated by commas - , :").split(",")
-    file_path = [path.strip() for path in file_path]
-    for File in file_path:
-        if not File:
-            continue
-        fileName = File.split("/")[-1]
-        s3.meta.client.download_file(File, bucketName, fileName)
+        fileName = input("Enter your file name to download from it: ")
+    #     # try:
+    #     #     s3.meta.client.head_bucket(Bucket=bucketName)
+    #     #     break
+    #     # except:
+    #         # print(f"The bucket {bucketName} doesnt exists")
+    # file_path = input("Enter the filenames separated by commas - , :").split(",")
+    # file_path = [path.strip() for path in file_path]
+    # for File in file_path:
+    #     if not File:
+    #         continue
+        # fileName = File.split("/")[-1]
+        s3c = boto3.client('s3')
+        s3c.download_file(bucketName, fileName, fileName)
         print(f"File with name: '{fileName}' Downloaded successfully!!!")
 
 
@@ -108,7 +112,7 @@ def menu ():
         elif(choice=="2"):
             print("Create your bucket:....\n")
             sleep(3)
-            createBucket("us-west-2")
+            res = createBucket("us-west-2")
         elif(choice=="3"):
             print("Upload new files to bucket:....\n")
             sleep(3)
