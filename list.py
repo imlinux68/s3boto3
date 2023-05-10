@@ -21,7 +21,7 @@ def listingFiles():
         bucketName = input("Enter your bucket name to list all files inside: ")
         try:
             s3_client.meta.client.head_bucket(Bucket=bucketName)
-            bucket = s3_client.Bucket(bucketName)
+            bucket = s3c.Bucket(bucketName)
             print(f"Files are in '{bucketName}' bucket are: ")
             for files in bucket.object.all():
                 print(files.key)
@@ -33,15 +33,17 @@ def listingFiles():
                 break
 
 
-def createBucket():
+def createBucket(region):
     while True:
         listBucket()
         bucketName = input("Enter your bucket name to list all files inside: ")
         try:
-            s3_client.meta.client.head_bucket(Bucket=bucketName)
-            print(f"The bucket name '{bucketName}' is already taken!!")
+            s3_client = boto3.client('s3', region_name=region)
+            location = {'LocationConstraint': region}
+            s3_client.create_bucket(Bucket=bucketName,
+                                    CreateBucketConfiguration=location)
         except:
-            s3_client.create_bucket(Bucket=bucketName)
+            s3c.create_bucket(Bucket=bucketName)
             print(f"The bucket name '{bucketName}' Created successfully!!")
             break
 
@@ -106,7 +108,7 @@ def menu ():
         elif(choice=="2"):
             print("Create your bucket:....\n")
             sleep(3)
-            createBucket()
+            createBucket("us-west-2")
         elif(choice=="3"):
             print("Upload new files to bucket:....\n")
             sleep(3)
